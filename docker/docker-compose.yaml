@@ -1,0 +1,68 @@
+version: '3'
+
+networks:
+  symfony-network:
+    driver: bridge
+
+services:
+
+        symfony:
+            container_name: symfony
+            build:
+                context: ./php-fpm
+                args:
+                    - timezone=${TZ}
+            networks:
+                - symfony-network
+            ports:
+                - "9000:9000"
+            volumes:
+                - ./../symfony:/symfony:rw,cached
+                - symfony_log:/symfony/var/log
+            env_file:
+                - .env
+            depends_on:
+                - db_master
+
+        nginx:
+            container_name: nginx
+            build:
+                context: ./nginx
+                args:
+                    - timezone=${TZ}
+            ports:
+                - "81:80"
+                - "443:443"
+            networks:
+                - symfony-network
+            depends_on:
+                - symfony
+            volumes:
+                - ./../symfony/public:/symfony/public
+                - ./nginx/ssl:/etc/nginx/ssl
+                - ./nginx/conf.d:/etc/nginx/conf.d
+                - ./nginx/nginx_log:/var/log/nginx
+                - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            env_file:
+                - .env
+            command: /bin/bash -c "exec nginx -g 'daemon off;'"
+
+        db_master:
+            container_name: db_master
+            image: mysql:8.0.30
+            env_file:
+                - ./db/master/.env.master
+            ports:
+                - "3307:3306"
+            volumes:
+                - ./db/master/master.sql:/docker-entrypoint-initdb.d/start.sql
+                - ./db/master/mysql.master.cnf:/etc/mysql/conf.d/mysql.master.cnf
+                - ./db/master/.data/mysql:/var/lib/mysql:rw
+            networks:
+                - symfony-network
+volumes:
+    nginx_log:
+    symfony_log:
+    db:
+        driver: local
+
