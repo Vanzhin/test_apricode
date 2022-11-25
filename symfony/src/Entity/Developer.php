@@ -55,7 +55,7 @@ class Developer
     {
         if (!$this->games->contains($game)) {
             $this->games->add($game);
-            $game->setDevelopers($this);
+            $game->setDeveloper($this);
         }
 
         return $this;
@@ -65,8 +65,8 @@ class Developer
     {
         if ($this->games->removeElement($game)) {
             // set the owning side to null (unless already changed)
-            if ($game->getDevelopers() === $this) {
-                $game->setDevelopers(null);
+            if ($game->getDeveloper() === $this) {
+                $game->setDeveloper(null);
             }
         }
 

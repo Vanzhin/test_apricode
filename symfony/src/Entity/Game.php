@@ -21,13 +21,13 @@ class Game
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 100, unique: true)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Gedmo\Slug(fields: ['title'])]
     private ?string $slug = null;
 
     #[ORM\ManyToOne(inversedBy: 'games')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Developer $developers = null;
+    private ?Developer $developer = null;
 
     #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'games')]
     private Collection $genres;
@@ -54,14 +54,14 @@ class Game
         return $this;
     }
 
-    public function getDevelopers(): ?Developer
+    public function getDeveloper(): ?Developer
     {
-        return $this->developers;
+        return $this->developer;
     }
 
-    public function setDevelopers(?Developer $developers): self
+    public function setDeveloper(?Developer $developer): self
     {
-        $this->developers = $developers;
+        $this->developer = $developer;
 
         return $this;
     }
