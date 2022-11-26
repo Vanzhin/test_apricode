@@ -6,6 +6,7 @@ use App\Repository\DeveloperRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DeveloperRepository::class)]
 class Developer
@@ -15,6 +16,7 @@ class Developer
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups('main')]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 

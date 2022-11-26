@@ -16,10 +16,11 @@ class GameFixtures extends BaseFixtures implements DependentFixtureInterface
         $this->createMany(Game::class, 500, function (Game $article) use ($manager) {
             $title = $this->faker->words(3, true);
             $article->setTitle($title)
-                ->setDeveloper($this->getRandomReferences(Developer::class));
+                ->setDeveloper($this->getRandomReferences(Developer::class))
+                ->setCreatedAt($this->faker->dateTimeBetween('-30 days'));
 
             $genres = [];
-            for ($i = 0; $i < $this->faker->numberBetween(0, 5); $i++) {
+            for ($i = 0; $i < $this->faker->numberBetween(1, 5); $i++) {
                 $genres[] = $this->getRandomReferences(Genre::class);
             }
             foreach ($genres as $genre) {

@@ -12,7 +12,7 @@ class GenreFixtures  extends BaseFixtures
         $this->createMany(Genre::class, 20, function (Genre $genre) use ($manager) {
 
             $genre
-                ->setTitle($this->faker->realText(10));
+                ->setTitle($this->faker->words($this->faker->numberBetween(1,5), true));
         });
     }
 
