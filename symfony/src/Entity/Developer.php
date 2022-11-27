@@ -20,7 +20,7 @@ class Developer
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\OneToMany(mappedBy: 'developers', targetEntity: Game::class)]
+    #[ORM\OneToMany(mappedBy: 'developer', targetEntity: Game::class)]
     private Collection $games;
 
     public function __construct()
