@@ -21,7 +21,7 @@ class Game
     #[Groups('main')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups('main')]
     private ?string $title = null;
 

@@ -28,4 +28,16 @@ class GameController extends AbstractController
         return ($json);
 
     }
+    #[Route('/api/game/{id<\d+>}', name: 'app_api_game_show', methods: ['GET'])]
+    public function show(GameRepository $gameRepository, Request $request, int $id): JsonResponse
+    {
+        $game = $gameRepository->find($id);
+        if($game){
+            $json = $this->json($game, 200, [], ['groups' => 'main']);
+        } else {
+            $json = $this->json(['error'=>'no game presented'], 200);
+        }
+        return ($json);
+
+    }
 }
