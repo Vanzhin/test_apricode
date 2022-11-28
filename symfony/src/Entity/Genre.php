@@ -17,7 +17,7 @@ class Genre
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(['main', 'genre'])]
 
     private ?string $title = null;
