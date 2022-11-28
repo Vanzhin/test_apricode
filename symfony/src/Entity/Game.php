@@ -25,11 +25,11 @@ class Game
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('main')]
+    #[Groups(['main', 'genre'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups('main')]
+    #[Groups(['main', 'genre'])]
     #[Assert\NotBlank(
         message: 'You should specify game title'
     )]
@@ -41,7 +41,7 @@ class Game
 
     #[ORM\ManyToOne(inversedBy: 'games')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('main')]
+    #[Groups(['main', 'genre'])]
     #[Assert\NotNull(
         message: 'No developer id or invalid id specified'
     )]
@@ -61,7 +61,7 @@ class Game
     )]
     private Collection $genres;
 
-    #[Groups('main')]
+    #[Groups(['main', 'genre'])]
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected $createdAt;

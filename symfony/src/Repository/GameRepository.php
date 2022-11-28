@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Game;
+use App\Entity\Genre;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -50,6 +51,7 @@ class GameRepository extends ServiceEntityRepository
     {
         return $queryBuilder ?? $this->createQueryBuilder('a');
     }
+
     public function findAllQuery(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('g');
@@ -59,13 +61,14 @@ class GameRepository extends ServiceEntityRepository
                 ->addSelect('gn');
     }
 
-//    public function findOneBySomeField($value): ?Game
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findAllByGenreQuery(Genre $genre): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('g');
+        return
+            $queryBuilder
+                ->leftJoin('g.genres', 'gn')
+                ->addSelect('gn')
+                ->andWhere('gn.id  = :id')
+                ->setParameter('id', $genre->getId());
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Game;
+use App\Entity\Genre;
 use App\Repository\GameRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -24,11 +25,29 @@ class GameController extends AbstractController
             10/*limit per page*/
         );
         if ($pagination->count()) {
-            $json = $this->json(['games' => $pagination, 'page' => $request->query->getInt('page', 1)], 200, [], ['groups' => 'main']);
+            return $this->json(['games' => $pagination, 'page' => $request->query->getInt('page', 1)], 200, [], ['groups' => 'main']);
         } else {
-            $json = $this->json(['error' => 'no games presented', 'page' => $request->query->getInt('page', 1)]);
+            return $this->json(['error' => 'no games presented', 'page' => $request->query->getInt('page', 1)]);
         }
-        return ($json);
+    }
+
+    #[Route('/api/game/genre/{id<\d+>}', name: 'app_api_game_genre', methods: ['GET'])]
+    public function genreGames(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, int $id): JsonResponse
+    {
+        $genre = $em->find(Genre::class, $id);
+        if ($genre) {
+            $pagination = $paginator->paginate(
+                $em->getRepository(Game::class)->findAllByGenreQuery($genre), /* query NOT result */
+                $request->query->getInt('page', 1)/*page number*/,
+                10/*limit per page*/
+            );
+            if ($pagination->count()) {
+                return $this->json(['genre' => $genre, 'games' => $pagination, 'page' => $request->query->getInt('page', 1)], 200, [], ['groups' => 'genre']);
+            } else {
+                return $this->json(['error' => 'no games presented', 'page' => $request->query->getInt('page', 1)]);
+            }
+        }
+        return $this->json(['error' => 'no games with this genre presented'], 200);
 
     }
 
@@ -37,12 +56,10 @@ class GameController extends AbstractController
     {
         $game = $gameRepository->find($id);
         if ($game) {
-            $json = $this->json($game, 200, [], ['groups' => 'main']);
+            return $this->json($game, 200, [], ['groups' => 'main']);
         } else {
-            $json = $this->json(['error' => 'no game presented'], 200);
+            return $this->json(['error' => 'no game presented'], 200);
         }
-        return ($json);
-
     }
 
     #[Route('/api/game/{id<\d+>}', name: 'app_api_game_delete', methods: ['DELETE'])]
@@ -57,7 +74,6 @@ class GameController extends AbstractController
             $json = $this->json(['error' => 'no game presented'], 200);
         }
         return ($json);
-
     }
 
     #[Route('/api/game', name: 'app_api_game_create', methods: ['POST'])]
@@ -66,7 +82,6 @@ class GameController extends AbstractController
         $data = $request->request->all();
         $game = new Game();
         return $this->entityHandle($data, $validator, $em, $game);
-
     }
 
     #[Route('/api/game/{id<\d+>}', name: 'app_api_game_update', methods: ['PUT'])]
@@ -76,7 +91,6 @@ class GameController extends AbstractController
         $game = $em->find(Game::class, $id);
         if ($game) {
             return $this->entityHandle($data, $validator, $em, $game);
-
         } else {
             return $this->json(['errors' => 'no game to update'], 200);
         }
@@ -88,12 +102,9 @@ class GameController extends AbstractController
         if ($game instanceof Game) {
             $em->persist($game);
             $em->flush();
-            $json = $this->json($game, 200, [], ['groups' => 'main']);
-
+            return $this->json($game, 200, [], ['groups' => 'main']);
         } else {
-            $json = $this->json(['errors' => $game], 200);
+            return $this->json(['errors' => $game], 200);
         }
-        return ($json);
-
     }
 }
