@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\GameRepository;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,12 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
-#[UniqueEntity('title', message: 'game with this name is already exist')]
+#[UniqueEntity('title', message: 'game with this name is already existed')]
 class Game
 {
     use TimestampableEntity;
@@ -139,35 +137,6 @@ class Game
         $this->genres->removeElement($genre);
 
         return $this;
-    }
-
-    public function game(array $data, ValidatorInterface $validator, EntityManagerInterface $em, Game $game): string|Game
-    {
-        $props['title'] = $data['title'] ?? null;
-        $props['developer'] = isset($data['developer']) ? str_replace(' ', '', $data['developer']) : null;
-        $props['genres'] = isset($data['genres']) ? explode(',', str_replace(' ', '', $data['genres'])) : [];
-        if (!is_null($props['developer'])) {
-            $game->setTitle($props['title'])
-                ->setDeveloper($em->find(Developer::class, $data['developer']));
-        }
-
-        if (count($props['genres']) > 0) {
-            $game->genres->clear();
-            foreach ($props['genres'] as $id) {
-                if ($em->find(Genre::class, $id))
-                    $game->addGenre($em->find(Genre::class, $id));
-            };
-        }
-
-        $errors = $validator->validate($game);
-        if (count($errors) > 0) {
-
-            return (string)$errors;
-        }
-
-        return $game;
-
-
     }
 
 }
