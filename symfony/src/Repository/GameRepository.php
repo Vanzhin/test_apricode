@@ -63,11 +63,8 @@ class GameRepository extends ServiceEntityRepository
 
     public function findAllByGenreQuery(Genre $genre): QueryBuilder
     {
-        $queryBuilder = $this->createQueryBuilder('g');
         return
-            $queryBuilder
-                ->leftJoin('g.genres', 'gn')
-                ->addSelect('gn')
+            $this->findAllQuery()
                 ->andWhere('gn.id  = :id')
                 ->setParameter('id', $genre->getId());
     }
